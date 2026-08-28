@@ -140,6 +140,11 @@ Models or providers reused by more than one feature (e.g. a trimmed-down entity 
 - Generic, feature-agnostic widgets go in `core/widgets/`; feature-specific widgets stay inside that feature's `presentation/widgets/`.
 - Do not introduce a new top-level layer folder inside a feature beyond `data/domain/presentation` — split within those instead.
 
+### Glass effect ("Liquid Glass")
+- Any UI element that floats over photographic or map content (chips, pills, floating bars) must use `GlassSurface` from `core/widgets/glass_surface.dart` instead of a flat translucent color.
+- This is a Flutter-drawn effect (`BackdropFilter` + blur, done by Flutter's own renderer) — not a native platform API — so it renders identically on Android and iOS with no per-platform branching.
+- Do not apply it to solid UI chrome that isn't floating over dynamic content (primary buttons, flat cards) — those stay flat per the design system.
+
 ---
 
 ## Code Quality Rules

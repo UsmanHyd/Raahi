@@ -11,7 +11,6 @@ class AppRadius {
 
   static BorderRadius get cardRadius => BorderRadius.circular(card);
   static BorderRadius get chipRadius => BorderRadius.circular(chip);
-  static BorderRadius get sheetRadius => const BorderRadius.vertical(
-        top: Radius.circular(sheet),
-      );
+  static BorderRadius get sheetRadius =>
+      const BorderRadius.vertical(top: Radius.circular(sheet));
 }

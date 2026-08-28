@@ -13,6 +13,7 @@ class PrimaryButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.expand = false,
+    this.backgroundColor = AppColors.primary700,
   });
 
   final String label;
@@ -22,16 +23,23 @@ class PrimaryButton extends StatelessWidget {
   /// is the shape used for inline CTAs like the onboarding "Next" button.
   final bool expand;
 
+  /// Defaults to primary-700. Override only when a screen's design calls
+  /// for a different fill (e.g. a dark/black CTA) — most screens should
+  /// leave this at the default so the primary action stays visually
+  /// consistent across the app.
+  final Color backgroundColor;
+
   @override
   Widget build(BuildContext context) {
     final button = FilledButton(
       onPressed: onPressed,
       style: FilledButton.styleFrom(
-        backgroundColor: AppColors.primary700,
+        backgroundColor: backgroundColor,
+        disabledBackgroundColor: backgroundColor.withValues(alpha: 0.4),
         foregroundColor: AppColors.surface0,
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.xl,
-          vertical: AppSpacing.md,
+          vertical: AppSpacing.lg,
         ),
         shape: const StadiumBorder(),
         textStyle: AppTypography.buttonLabel,

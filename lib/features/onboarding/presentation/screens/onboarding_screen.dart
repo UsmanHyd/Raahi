@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_radius.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
-import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/glass_button.dart';
+import '../../../../core/widgets/glass_surface.dart';
+import '../../../auth/presentation/screens/signup_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -20,18 +21,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       title: 'Plan scenic road trips',
       subtitle:
           'Discover the best routes, stopovers, and hotels across Pakistan.',
+      // The road/lake/buildings sit in the left third of this photo — a
+      // centered crop would show only bare mountainside.
+      alignment: Alignment.centerLeft,
     ),
     _OnboardingPage(
       imageAsset: 'assets/onboarding/onboarding2.jpg',
       title: 'Navigate with confidence',
       subtitle:
           'Real-time road conditions, rest stops, and offline maps for remote areas.',
+      alignment: Alignment.center,
     ),
     _OnboardingPage(
       imageAsset: 'assets/onboarding/onboarding3.jpg',
       title: 'Book & explore locally',
       subtitle:
           'Find curated hotels, hidden gems, and local experiences along your route.',
+      alignment: Alignment.center,
     ),
   ];
 
@@ -40,13 +46,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _showNextPage() {
     if (_currentPage < _pages.length - 1) {
       setState(() => _currentPage++);
+    } else {
+      _goToSignup();
     }
   }
 
-  void _skipToLastPage() {
-    if (_currentPage != _pages.length - 1) {
-      setState(() => _currentPage = _pages.length - 1);
-    }
+  void _skipToSignup() => _goToSignup();
+
+  void _goToSignup() {
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => const SignupScreen()));
   }
 
   @override
@@ -55,41 +65,36 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final isLastPage = _currentPage == _pages.length - 1;
 
     return Scaffold(
-      backgroundColor: AppColors.surface0,
-      body: Column(
+      body: Stack(
+        fit: StackFit.expand,
         children: [
-          Expanded(
-            flex: 5,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 350),
-                  child: Image.asset(
-                    page.imageAsset,
-                    key: ValueKey(page.imageAsset),
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                  ),
-                ),
-                SafeArea(
-                  bottom: false,
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.lg),
-                      child: _SkipButton(onTap: _skipToLastPage),
-                    ),
-                  ),
-                ),
-              ],
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 350),
+            child: Image.asset(
+              page.imageAsset,
+              key: ValueKey(page.imageAsset),
+              fit: BoxFit.cover,
+              alignment: page.alignment,
+              width: double.infinity,
+              height: double.infinity,
             ),
           ),
-          Expanded(
-            flex: 4,
-            child: ColoredBox(
-              color: AppColors.surface0,
+          SafeArea(
+            bottom: false,
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: _SkipButton(onTap: _skipToSignup),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: GlassSurface(
+              borderRadius: AppRadius.sheetRadius,
               child: SafeArea(
                 top: false,
                 child: Padding(
@@ -100,6 +105,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     AppSpacing.lg,
                   ),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AnimatedSwitcher(
@@ -108,12 +114,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           key: ValueKey(page.title),
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(page.title, style: AppTypography.display),
+                            Text(
+                              page.title,
+                              style: AppTypography.display.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
                             const SizedBox(height: AppSpacing.sm),
                             Text(
                               page.subtitle,
                               style: AppTypography.body.copyWith(
-                                color: AppColors.ink600,
+                                color: Colors.white.withValues(alpha: 0.85),
                               ),
                             ),
                           ],
@@ -124,13 +135,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         children: [
                           _PageIndicator(currentPage: _currentPage),
                           const Spacer(),
-                          PrimaryButton(
+                          GlassButton(
                             label: isLastPage ? 'Get started' : 'Next',
                             onPressed: _showNextPage,
+                            tintOpacity: 0.28,
                           ),
                         ],
                       ),
-                      const Spacer(),
                     ],
                   ),
                 ),
@@ -155,14 +166,11 @@ class _SkipButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadius.chip),
-        child: Container(
+        child: GlassSurface(
+          borderRadius: BorderRadius.circular(AppRadius.chip),
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
             vertical: AppSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(AppRadius.chip),
           ),
           child: Text(
             'Skip',
@@ -194,8 +202,8 @@ class _PageIndicator extends StatelessWidget {
           width: index == currentPage ? 14 : AppSpacing.xs,
           decoration: BoxDecoration(
             color: index == currentPage
-                ? AppColors.primary700
-                : AppColors.ink300,
+                ? Colors.white
+                : Colors.white.withValues(alpha: 0.4),
             borderRadius: BorderRadius.circular(AppSpacing.xs),
           ),
         ),
@@ -209,9 +217,11 @@ class _OnboardingPage {
     required this.imageAsset,
     required this.title,
     required this.subtitle,
+    this.alignment = Alignment.center,
   });
 
   final String imageAsset;
   final String title;
   final String subtitle;
+  final Alignment alignment;
 }
