@@ -8,21 +8,21 @@ import '../../../../core/constants/app_typography.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../widgets/social_sign_in_button.dart';
-import 'login_screen.dart';
+import 'signup_screen.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
-  bool _agreedToTerms = false;
+  bool _rememberMe = false;
 
   @override
   void dispose() {
@@ -31,7 +31,7 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  void _signUp() {
+  void _signIn() {
     // TODO: wire to the auth repository once the backend is in place.
   }
 
@@ -43,10 +43,14 @@ class _SignupScreenState extends State<SignupScreen> {
     // TODO: wire to the auth repository once the backend is in place.
   }
 
-  void _goToLogin() {
+  void _forgotPassword() {
+    // TODO: navigate to the forgot-password flow once built.
+  }
+
+  void _goToSignup() {
     Navigator.of(
       context,
-    ).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
+    ).pushReplacement(MaterialPageRoute(builder: (_) => const SignupScreen()));
   }
 
   @override
@@ -68,7 +72,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: Text(
-                          'Create your account',
+                          'Welcome back',
                           textAlign: TextAlign.center,
                           style: AppTypography.h1,
                         ),
@@ -77,8 +81,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: Text(
-                          'Provide your email and password to create your '
-                          'account and get started.',
+                          'Stay connected by signing in with your email '
+                          'and password to access your account.',
                           textAlign: TextAlign.center,
                           style: AppTypography.body.copyWith(
                             color: AppColors.ink600,
@@ -141,7 +145,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       const SizedBox(height: AppSpacing.lg),
                       AppTextField(
                         label: 'Password',
-                        hintText: 'Create a password',
+                        hintText: 'Enter your password',
                         controller: _passwordController,
                         obscureText: _obscurePassword,
                         labelStyle: AppTypography.caption.copyWith(
@@ -162,43 +166,36 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.lg),
+                      const SizedBox(height: AppSpacing.md),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Transform.scale(
-                            scale: 0.85,
-                            child: Switch(
-                              value: _agreedToTerms,
-                              onChanged: (value) =>
-                                  setState(() => _agreedToTerms = value),
-                              activeTrackColor: AppColors.primary700,
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          Expanded(
-                            child: RichText(
-                              text: TextSpan(
+                          Row(
+                            children: [
+                              Transform.scale(
+                                scale: 0.85,
+                                child: Switch(
+                                  value: _rememberMe,
+                                  onChanged: (value) =>
+                                      setState(() => _rememberMe = value),
+                                  activeTrackColor: AppColors.primary700,
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.xs),
+                              Text(
+                                'Remember me',
                                 style: AppTypography.caption.copyWith(
                                   color: AppColors.ink600,
                                 ),
-                                children: const [
-                                  TextSpan(text: 'I agree to the '),
-                                  TextSpan(
-                                    text: 'Terms',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.ink900,
-                                    ),
-                                  ),
-                                  TextSpan(text: ' & '),
-                                  TextSpan(
-                                    text: 'Privacy Policy',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.ink900,
-                                    ),
-                                  ),
-                                ],
+                              ),
+                            ],
+                          ),
+                          GestureDetector(
+                            onTap: _forgotPassword,
+                            child: Text(
+                              'Forgot Password?',
+                              style: AppTypography.captionEmphasis.copyWith(
+                                color: AppColors.ink900,
                               ),
                             ),
                           ),
@@ -206,8 +203,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                       const SizedBox(height: AppSpacing.xxl),
                       PrimaryButton(
-                        label: 'Sign Up',
-                        onPressed: _agreedToTerms ? _signUp : null,
+                        label: 'Sign In',
+                        onPressed: _signIn,
                         expand: true,
                       ),
                       const SizedBox(height: AppSpacing.xl),
@@ -218,15 +215,15 @@ class _SignupScreenState extends State<SignupScreen> {
                               color: AppColors.ink600,
                             ),
                             children: [
-                              const TextSpan(text: 'Already have an account? '),
+                              const TextSpan(text: "Don't have an account? "),
                               TextSpan(
-                                text: 'Sign In',
+                                text: 'Sign Up',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.ink900,
                                 ),
                                 recognizer: TapGestureRecognizer()
-                                  ..onTap = _goToLogin,
+                                  ..onTap = _goToSignup,
                               ),
                             ],
                           ),
