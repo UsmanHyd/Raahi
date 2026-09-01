@@ -8,6 +8,7 @@ import '../../../../core/constants/app_typography.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../widgets/social_sign_in_button.dart';
+import 'complete_profile_screen.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -33,6 +34,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _signIn() {
     // TODO: wire to the auth repository once the backend is in place.
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const CompleteProfileScreen()));
   }
 
   void _continueWithGoogle() {
