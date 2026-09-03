@@ -59,12 +59,6 @@ class AppTheme {
         ),
       ),
       dividerColor: AppColors.border,
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.surface0,
-        selectedItemColor: AppColors.primary700,
-        unselectedItemColor: AppColors.ink300,
-        type: BottomNavigationBarType.fixed,
-      ),
     );
   }
 }

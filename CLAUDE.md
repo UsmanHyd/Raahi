@@ -156,6 +156,7 @@ Models or providers reused by more than one feature (e.g. a trimmed-down entity 
 - Write code that is **maintainable** — easy to change without breaking things.
 - Follow **single responsibility** — one class/function does one thing.
 - Keep files focused — split when a file is doing too much.
+-skip the testing i will do that by myself your task is to analyze the code if there is any sort of error in that or not just tell me what to test i will do it myself
 
 ### Flutter / Dart Specifics
 - Use `const` constructors wherever possible.

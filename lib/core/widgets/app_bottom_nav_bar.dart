@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 
-/// The app's persistent bottom tab bar: Home / My trips / Profile.
-/// Colors and type come from [ThemeData.bottomNavigationBarTheme] — never
-/// styled inline here.
+import '../constants/app_colors.dart';
+import '../constants/app_shadows.dart';
+import '../constants/app_spacing.dart';
+import '../constants/app_typography.dart';
+
+/// The app's persistent bottom tab bar: Home / Trips / Profile.
+///
+/// A floating pill rather than a docked Material bar — the selected tab
+/// grows a filled pill behind its icon + label, unselected tabs show just
+/// the icon. Switching tabs animates the old pill closing and the new one
+/// opening.
 class AppBottomNavBar extends StatelessWidget {
   const AppBottomNavBar({
     super.key,
@@ -13,25 +21,112 @@ class AppBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
+  static const List<_NavItemData> _items = [
+    _NavItemData(icon: Icons.home_outlined, label: 'Home'),
+    _NavItemData(icon: Icons.card_travel_outlined, label: 'Trips'),
+    _NavItemData(icon: Icons.person_outline, label: 'Profile'),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          0,
+          AppSpacing.lg,
+          AppSpacing.md,
+        ),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: AppColors.surface0,
+            borderRadius: BorderRadius.circular(999),
+            boxShadow: AppShadows.card,
+          ),
+          child: Row(
+            children: [
+              for (var i = 0; i < _items.length; i++)
+                Expanded(
+                  child: _NavBarButton(
+                    data: _items[i],
+                    selected: i == currentIndex,
+                    onTap: () => onTap(i),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItemData {
+  const _NavItemData({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+}
+
+class _NavBarButton extends StatelessWidget {
+  const _NavBarButton({
+    required this.data,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final _NavItemData data;
+  final bool selected;
+  final VoidCallback onTap;
+
+  static const Duration _duration = Duration(milliseconds: 220);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
       onTap: onTap,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          label: 'Home',
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: _duration,
+        curve: Curves.easeInOut,
+        padding: selected
+            ? const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm,
+              )
+            : const EdgeInsets.all(AppSpacing.sm),
+        decoration: BoxDecoration(
+          color: selected ? AppColors.primary700 : Colors.transparent,
+          borderRadius: BorderRadius.circular(999),
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.card_travel_outlined),
-          label: 'My trips',
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              data.icon,
+              size: 22,
+              color: selected ? AppColors.surface0 : AppColors.ink300,
+            ),
+            AnimatedSize(
+              duration: _duration,
+              curve: Curves.easeInOut,
+              child: selected
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: AppSpacing.xs),
+                      child: Text(
+                        data.label,
+                        style: AppTypography.captionEmphasis.copyWith(
+                          color: AppColors.surface0,
+                        ),
+                      ),
+                    )
+                  : const SizedBox(height: 22),
+            ),
+          ],
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          label: 'Profile',
-        ),
-      ],
+      ),
     );
   }
 }
