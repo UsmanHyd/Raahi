@@ -15,7 +15,10 @@ class OtherSuggestionsScreen extends StatelessWidget {
       backgroundColor: AppColors.surface50,
       appBar: AppBar(title: const Text('Other suggestions')),
       body: const Center(
-        child: Text('Other suggestions — coming soon', style: AppTypography.body),
+        child: Text(
+          'Other suggestions — coming soon',
+          style: AppTypography.body,
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
@@ -19,12 +20,10 @@ class HomeProfileHeader extends StatelessWidget {
         const CircleAvatar(
           radius: 22,
           backgroundColor: AppColors.primary100,
-          child: Icon(Icons.person, color: AppColors.primary700, size: 24),
+          child: Icon(LucideIcons.user, color: AppColors.primary700, size: 24),
         ),
         const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Text('Hello $_name!', style: AppTypography.h2),
-        ),
+        Expanded(child: Text('Hello $_name!', style: AppTypography.h2)),
         _NotificationBellButton(
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const NotificationsScreen()),
@@ -50,11 +49,7 @@ class _NotificationBellButton extends StatelessWidget {
         customBorder: const CircleBorder(),
         child: const Padding(
           padding: EdgeInsets.all(AppSpacing.sm),
-          child: Icon(
-            Icons.notifications_none_rounded,
-            color: AppColors.ink900,
-            size: 24,
-          ),
+          child: Icon(LucideIcons.bell, color: AppColors.ink900, size: 24),
         ),
       ),
     );

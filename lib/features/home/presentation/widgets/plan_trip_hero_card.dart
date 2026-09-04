@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_gradients.dart';
@@ -36,9 +37,10 @@ class PlanTripHeroCard extends StatelessWidget {
               Image.asset(
                 _imageAsset,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const DecoratedBox(
-                  decoration: BoxDecoration(gradient: AppGradients.primary),
-                ),
+                errorBuilder: (context, error, stackTrace) =>
+                    const DecoratedBox(
+                      decoration: BoxDecoration(gradient: AppGradients.primary),
+                    ),
               ),
               DecoratedBox(
                 decoration: BoxDecoration(
@@ -115,7 +117,7 @@ class PlanTripHeroCard extends StatelessWidget {
                           ),
                           const SizedBox(width: AppSpacing.xs),
                           const Icon(
-                            Icons.arrow_forward_rounded,
+                            LucideIcons.arrowRight,
                             color: AppColors.primary700,
                             size: 18,
                           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_radius.dart';
@@ -57,7 +58,7 @@ class _RecommendedPlaceCardState extends State<RecommendedPlaceCard> {
                   ),
                 ),
                 child: const Icon(
-                  Icons.terrain_outlined,
+                  LucideIcons.mountain,
                   color: AppColors.surface0,
                   size: 48,
                 ),
@@ -124,7 +125,9 @@ class _RecommendedPlaceCardState extends State<RecommendedPlaceCard> {
                         AnimatedSlide(
                           duration: const Duration(milliseconds: 220),
                           curve: Curves.easeOut,
-                          offset: _revealed ? Offset.zero : const Offset(0, 0.6),
+                          offset: _revealed
+                              ? Offset.zero
+                              : const Offset(0, 0.6),
                           child: AnimatedOpacity(
                             duration: const Duration(milliseconds: 220),
                             opacity: _revealed ? 1 : 0,
@@ -133,8 +136,9 @@ class _RecommendedPlaceCardState extends State<RecommendedPlaceCard> {
                               child: FilledButton(
                                 onPressed: () => Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (_) =>
-                                        PlaceDetailScreen(placeName: widget.name),
+                                    builder: (_) => PlaceDetailScreen(
+                                      placeName: widget.name,
+                                    ),
                                   ),
                                 ),
                                 style: FilledButton.styleFrom(
@@ -184,7 +188,7 @@ class _RatingBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.star_rounded, color: AppColors.accentAmber, size: 16),
+          const Icon(LucideIcons.star, color: AppColors.accentAmber, size: 16),
           const SizedBox(width: AppSpacing.xs),
           Text(rating.toStringAsFixed(1), style: AppTypography.captionEmphasis),
         ],
@@ -210,7 +214,7 @@ class _FavoriteButton extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.sm),
           child: Icon(
-            isFavorite ? Icons.favorite : Icons.favorite_border,
+            isFavorite ? LucideIcons.heart : LucideIcons.heart,
             color: isFavorite ? AppColors.accentTerracotta : AppColors.ink600,
             size: 18,
           ),

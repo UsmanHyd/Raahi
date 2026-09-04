@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/app_shadows.dart';
@@ -23,10 +24,10 @@ class AppBottomNavBar extends StatelessWidget {
   final ValueChanged<int> onTap;
 
   static const List<_NavItemData> _items = [
-    _NavItemData(icon: Icons.home_outlined, label: 'Home'),
-    _NavItemData(icon: Icons.card_travel_outlined, label: 'Trips'),
-    _NavItemData(icon: Icons.person_outline, label: 'Profile'),
-    _NavItemData(icon: Icons.settings_outlined, label: 'Settings'),
+    _NavItemData(icon: LucideIcons.home, label: 'Home'),
+    _NavItemData(icon: LucideIcons.luggage, label: 'Trips'),
+    _NavItemData(icon: LucideIcons.user, label: 'Profile'),
+    _NavItemData(icon: LucideIcons.settings, label: 'Settings'),
   ];
 
   @override

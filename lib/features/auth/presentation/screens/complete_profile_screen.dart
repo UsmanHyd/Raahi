@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_gradients.dart';
@@ -11,6 +12,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/router/app_shell.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../core/widgets/circle_icon_button.dart';
 import '../../../../core/widgets/primary_button.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
@@ -47,16 +49,12 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const _PickerOptionIcon(
-                icon: Icons.photo_camera_outlined,
-              ),
+              leading: const _PickerOptionIcon(icon: LucideIcons.camera),
               title: Text('Take a photo', style: AppTypography.bodyEmphasis),
               onTap: () => Navigator.of(context).pop(ImageSource.camera),
             ),
             ListTile(
-              leading: const _PickerOptionIcon(
-                icon: Icons.photo_library_outlined,
-              ),
+              leading: const _PickerOptionIcon(icon: LucideIcons.image),
               title: Text(
                 'Choose from gallery',
                 style: AppTypography.bodyEmphasis,
@@ -91,170 +89,153 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.surface50,
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    clipBehavior: Clip.none,
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.fromLTRB(
-                          AppSpacing.lg,
-                          AppSpacing.sm,
-                          AppSpacing.lg,
-                          AppSpacing.xxxxl + AppSpacing.xl,
-                        ),
-                        decoration: const BoxDecoration(
-                          gradient: AppGradients.primary,
-                          borderRadius: BorderRadius.vertical(
-                            bottom: Radius.circular(AppRadius.sheet),
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: AppColors.surface50,
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.fromLTRB(
+                            AppSpacing.lg,
+                            AppSpacing.sm,
+                            AppSpacing.lg,
+                            AppSpacing.xxxxl + AppSpacing.xl,
                           ),
-                        ),
-                        child: SafeArea(
-                          bottom: false,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _BackButton(
-                                onTap: () => Navigator.of(context).maybePop(),
-                              ),
-                              const SizedBox(height: AppSpacing.xl),
-                              Text(
-                                'Set up your profile',
-                                style: AppTypography.h1.copyWith(
-                                  color: AppColors.surface0,
+                          decoration: const BoxDecoration(
+                            gradient: AppGradients.primary,
+                            borderRadius: BorderRadius.vertical(
+                              bottom: Radius.circular(AppRadius.sheet),
+                            ),
+                          ),
+                          child: SafeArea(
+                            bottom: false,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CircleIconButton(
+                                  icon: LucideIcons.arrowLeft,
+                                  onTap: () => Navigator.of(context).maybePop(),
                                 ),
-                              ),
-                              const SizedBox(height: AppSpacing.xs),
-                              Text(
-                                'Tell us a bit about yourself',
-                                style: AppTypography.body.copyWith(
-                                  color: AppColors.surface0.withValues(
-                                    alpha: 0.85,
+                                const SizedBox(height: AppSpacing.xl),
+                                Text(
+                                  'Set up your profile',
+                                  style: AppTypography.h1.copyWith(
+                                    color: AppColors.surface0,
                                   ),
                                 ),
+                                const SizedBox(height: AppSpacing.xs),
+                                Text(
+                                  'Tell us a bit about yourself',
+                                  style: AppTypography.body.copyWith(
+                                    color: AppColors.surface0.withValues(
+                                      alpha: 0.85,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: -(_avatarSize / 2),
+                          child: _ProfilePicturePicker(
+                            image: _profileImage,
+                            onTap: _pickProfilePicture,
+                            size: _avatarSize,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.lg,
+                        (_avatarSize / 2) + AppSpacing.xl,
+                        AppSpacing.lg,
+                        AppSpacing.lg,
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface0,
+                          borderRadius: AppRadius.cardRadius,
+                          boxShadow: AppShadows.card,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppTextField(
+                              label: 'Full name',
+                              hintText: 'Enter your full name',
+                              controller: _fullNameController,
+                              prefixIcon: const Icon(
+                                LucideIcons.user,
+                                color: AppColors.ink300,
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                            AppTextField(
+                              label: 'Phone Number',
+                              hintText: '+9200000000',
+                              controller: _phoneController,
+                              keyboardType: TextInputType.phone,
+                              prefixIcon: const Icon(
+                                LucideIcons.phone,
+                                color: AppColors.ink300,
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                            AppTextField(
+                              label: 'Home city (optional)',
+                              hintText: 'e.g. Islamabad, Lahore',
+                              controller: _homeCityController,
+                              prefixIcon: const Icon(
+                                LucideIcons.building2,
+                                color: AppColors.ink300,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Positioned(
-                        bottom: -(_avatarSize / 2),
-                        child: _ProfilePicturePicker(
-                          image: _profileImage,
-                          onTap: _pickProfilePicture,
-                          size: _avatarSize,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.lg,
-                      (_avatarSize / 2) + AppSpacing.xl,
-                      AppSpacing.lg,
-                      AppSpacing.lg,
                     ),
-                    child: Container(
-                      padding: const EdgeInsets.all(AppSpacing.lg),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface0,
-                        borderRadius: AppRadius.cardRadius,
-                        boxShadow: AppShadows.card,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AppTextField(
-                            label: 'Full name',
-                            hintText: 'Enter your full name',
-                            controller: _fullNameController,
-                            prefixIcon: const Icon(
-                              Icons.person_outline,
-                              color: AppColors.ink300,
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-                          AppTextField(
-                            label: 'Phone Number',
-                            hintText: '+9200000000',
-                            controller: _phoneController,
-                            keyboardType: TextInputType.phone,
-                            prefixIcon: const Icon(
-                              Icons.phone_outlined,
-                              color: AppColors.ink300,
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.lg),
-                          AppTextField(
-                            label: 'Home city (optional)',
-                            hintText: 'e.g. Islamabad, Lahore',
-                            controller: _homeCityController,
-                            prefixIcon: const Icon(
-                              Icons.location_city_outlined,
-                              color: AppColors.ink300,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: AppColors.surface0,
-              boxShadow: AppShadows.card,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.sm,
-              ),
-              child: SafeArea(
-                top: false,
-                child: PrimaryButton(
-                  label: 'Continue',
-                  onPressed: _continue,
-                  expand: true,
+                  ],
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BackButton extends StatelessWidget {
-  const _BackButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface0.withValues(alpha: 0.2),
-      shape: const CircleBorder(),
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const CircleBorder(),
-        child: const Padding(
-          padding: EdgeInsets.all(AppSpacing.sm),
-          child: Icon(Icons.arrow_back, color: AppColors.surface0, size: 20),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: AppColors.surface0,
+                boxShadow: AppShadows.card,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                  AppSpacing.sm,
+                ),
+                child: SafeArea(
+                  top: false,
+                  child: PrimaryButton(
+                    label: 'Continue',
+                    onPressed: _continue,
+                    expand: true,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -320,7 +301,7 @@ class _ProfilePicturePicker extends StatelessWidget {
               ),
               child: image == null
                   ? const Icon(
-                      Icons.person_outline,
+                      LucideIcons.user,
                       size: 56,
                       color: AppColors.primary700,
                     )
@@ -338,7 +319,7 @@ class _ProfilePicturePicker extends StatelessWidget {
                   border: Border.all(color: AppColors.surface0, width: 2),
                 ),
                 child: const Icon(
-                  Icons.camera_alt_outlined,
+                  LucideIcons.camera,
                   size: 18,
                   color: AppColors.surface0,
                 ),

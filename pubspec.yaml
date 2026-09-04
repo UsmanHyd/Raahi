@@ -41,7 +41,7 @@ dependencies:
 
   image_picker: ^1.2.3
   flutter_card_swiper: ^7.2.0
-
+  lucide_icons_flutter: ^3.1.17
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -73,6 +73,8 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: assets/logo.jpg
+  adaptive_icon_background: "#1F5E4C"
+  adaptive_icon_foreground: assets/adaptive_icon_foreground.png
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

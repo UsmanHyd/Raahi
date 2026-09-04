@@ -176,3 +176,5 @@ Models or providers reused by more than one feature (e.g. a trimmed-down entity 
 - **Always run build_runner after modifying freezed/json files** — remind me if I forget.
 - **Do not introduce new packages** without flagging it and explaining why first.
 - **Do not suggest get_it** — Riverpod handles dependency injection.
+- **Always use Lucide icons (`lucide_icons` package, `LucideIcons.*`)** — never Flutter's built-in Material `Icons.*`. Apply this automatically to every new icon, without being asked.
+- **Every screen with text input fields must dismiss the keyboard and clear field focus when the user taps outside an input** — wrap the screen body in a `GestureDetector` (`behavior: HitTestBehavior.translucent`) that calls `FocusScope.of(context).unfocus()` on tap. Apply this automatically to every new form screen, without being asked.

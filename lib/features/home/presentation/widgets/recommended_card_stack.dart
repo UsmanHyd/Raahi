@@ -62,8 +62,7 @@ class _RecommendedCardStackState extends State<RecommendedCardStack> {
               isLoop: false,
               padding: const EdgeInsets.only(bottom: AppSpacing.lg),
               onEnd: () => setState(() => _exhausted = true),
-              cardBuilder:
-                  (context, index, horizontalOffset, verticalOffset) {
+              cardBuilder: (context, index, horizontalOffset, verticalOffset) {
                 final place = RecommendedCardStack._places[index];
                 return RecommendedPlaceCard(
                   imageAsset: place.imageAsset,

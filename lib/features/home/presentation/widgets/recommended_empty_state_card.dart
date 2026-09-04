@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_radius.dart';
@@ -25,11 +26,7 @@ class RecommendedEmptyStateCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.explore_off_outlined,
-            size: 40,
-            color: AppColors.ink300,
-          ),
+          const Icon(LucideIcons.compass, size: 40, color: AppColors.ink300),
           const SizedBox(height: AppSpacing.lg),
           Text(
             "Not what you're looking for?",

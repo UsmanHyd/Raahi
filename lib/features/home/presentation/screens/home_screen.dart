@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/widgets/section_header.dart';
+import '../../../trip_planner/presentation/screens/plan_trip_screen.dart';
 import '../widgets/explore_nearby_section.dart';
 import '../widgets/home_profile_header.dart';
 import '../widgets/plan_trip_hero_card.dart';
@@ -47,7 +49,7 @@ class HomeScreen extends StatelessWidget {
           Row(
             children: [
               const Icon(
-                Icons.flight_takeoff_rounded,
+                LucideIcons.planeTakeoff,
                 color: AppColors.primary700,
                 size: 22,
               ),
@@ -56,7 +58,11 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
-          const PlanTripHeroCard(),
+          PlanTripHeroCard(
+            onTap: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const PlanTripScreen())),
+          ),
           const SizedBox(height: AppSpacing.xxl),
           SectionHeader(
             title: 'Explore Nearby',
