@@ -15,6 +15,7 @@ class AppTextField extends StatelessWidget {
     this.controller,
     this.obscureText = false,
     this.keyboardType,
+    this.prefixIcon,
     this.suffixIcon,
     this.labelStyle,
     this.borderRadius = AppRadius.input,
@@ -27,6 +28,7 @@ class AppTextField extends StatelessWidget {
   final TextEditingController? controller;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final Widget? prefixIcon;
   final Widget? suffixIcon;
 
   /// Defaults to the 13/Semibold ink-900 label style. Override for screens
@@ -64,6 +66,7 @@ class AppTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: AppTypography.body.copyWith(color: AppColors.ink300),
+        prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: AppColors.surface0,

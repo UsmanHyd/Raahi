@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_gradients.dart';
 import '../../../../core/constants/app_radius.dart';
+import '../../../../core/constants/app_shadows.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
+import '../../../../core/router/app_shell.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/primary_button.dart';
 
@@ -23,6 +26,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   final _homeCityController = TextEditingController();
 
   File? _profileImage;
+
+  static const double _avatarSize = 112;
 
   @override
   void dispose() {
@@ -78,107 +83,178 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   void _continue() {
     // TODO: wire to the auth/profile repository once the backend is in place.
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const AppShell()),
+      (route) => false,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface50,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                onPressed: () => Navigator.of(context).maybePop(),
-                icon: const Icon(Icons.arrow_back, color: AppColors.ink900),
-              ),
-            ),
-            Expanded(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.lg,
-                    ),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight,
-                      ),
-                      child: IntrinsicHeight(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 80),
-                            Text(
-                              'Set up your profile',
-                              style: AppTypography.h1,
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            Text(
-                              'Tell us a bit about yourself',
-                              style: AppTypography.body.copyWith(
-                                color: AppColors.ink600,
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.lg,
+                          AppSpacing.sm,
+                          AppSpacing.lg,
+                          AppSpacing.xxxxl + AppSpacing.xl,
+                        ),
+                        decoration: const BoxDecoration(
+                          gradient: AppGradients.primary,
+                          borderRadius: BorderRadius.vertical(
+                            bottom: Radius.circular(AppRadius.sheet),
+                          ),
+                        ),
+                        child: SafeArea(
+                          bottom: false,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _BackButton(
+                                onTap: () => Navigator.of(context).maybePop(),
                               ),
-                            ),
-                            const SizedBox(height: 40),
-                            Center(
-                              child: _ProfilePicturePicker(
-                                image: _profileImage,
-                                onTap: _pickProfilePicture,
+                              const SizedBox(height: AppSpacing.xl),
+                              Text(
+                                'Set up your profile',
+                                style: AppTypography.h1.copyWith(
+                                  color: AppColors.surface0,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: AppSpacing.xxl),
-                            AppTextField(
-                              label: 'Full name',
-                              hintText: 'Enter your full name',
-                              controller: _fullNameController,
-                            ),
-                            const SizedBox(height: AppSpacing.lg),
-                            AppTextField(
-                              label: 'Phone Number',
-                              hintText: '+9200000000',
-                              controller: _phoneController,
-                              keyboardType: TextInputType.phone,
-                            ),
-                            const SizedBox(height: AppSpacing.lg),
-                            AppTextField(
-                              label: 'Home city (optional)',
-                              hintText: 'e.g. Islamabad, Lahore',
-                              controller: _homeCityController,
-                            ),
-                          ],
+                              const SizedBox(height: AppSpacing.xs),
+                              Text(
+                                'Tell us a bit about yourself',
+                                style: AppTypography.body.copyWith(
+                                  color: AppColors.surface0.withValues(
+                                    alpha: 0.85,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: AppColors.surface0,
-                borderRadius: AppRadius.sheetRadius,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  AppSpacing.lg,
-                  AppSpacing.lg,
-                  AppSpacing.sm,
-                ),
-                child: SafeArea(
-                  top: false,
-                  child: PrimaryButton(
-                    label: 'Continue',
-                    onPressed: _continue,
-                    expand: true,
+                      Positioned(
+                        bottom: -(_avatarSize / 2),
+                        child: _ProfilePicturePicker(
+                          image: _profileImage,
+                          onTap: _pickProfilePicture,
+                          size: _avatarSize,
+                        ),
+                      ),
+                    ],
                   ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.lg,
+                      (_avatarSize / 2) + AppSpacing.xl,
+                      AppSpacing.lg,
+                      AppSpacing.lg,
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface0,
+                        borderRadius: AppRadius.cardRadius,
+                        boxShadow: AppShadows.card,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppTextField(
+                            label: 'Full name',
+                            hintText: 'Enter your full name',
+                            controller: _fullNameController,
+                            prefixIcon: const Icon(
+                              Icons.person_outline,
+                              color: AppColors.ink300,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+                          AppTextField(
+                            label: 'Phone Number',
+                            hintText: '+9200000000',
+                            controller: _phoneController,
+                            keyboardType: TextInputType.phone,
+                            prefixIcon: const Icon(
+                              Icons.phone_outlined,
+                              color: AppColors.ink300,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+                          AppTextField(
+                            label: 'Home city (optional)',
+                            hintText: 'e.g. Islamabad, Lahore',
+                            controller: _homeCityController,
+                            prefixIcon: const Icon(
+                              Icons.location_city_outlined,
+                              color: AppColors.ink300,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: AppColors.surface0,
+              boxShadow: AppShadows.card,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.sm,
+              ),
+              child: SafeArea(
+                top: false,
+                child: PrimaryButton(
+                  label: 'Continue',
+                  onPressed: _continue,
+                  expand: true,
                 ),
               ),
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BackButton extends StatelessWidget {
+  const _BackButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface0.withValues(alpha: 0.2),
+      shape: const CircleBorder(),
+      child: InkWell(
+        onTap: onTap,
+        customBorder: const CircleBorder(),
+        child: const Padding(
+          padding: EdgeInsets.all(AppSpacing.sm),
+          child: Icon(Icons.arrow_back, color: AppColors.surface0, size: 20),
         ),
       ),
     );
@@ -205,30 +281,36 @@ class _PickerOptionIcon extends StatelessWidget {
 }
 
 class _ProfilePicturePicker extends StatelessWidget {
-  const _ProfilePicturePicker({required this.onTap, this.image});
+  const _ProfilePicturePicker({
+    required this.onTap,
+    required this.size,
+    this.image,
+  });
 
   final VoidCallback onTap;
+  final double size;
   final File? image;
 
-  static const double _size = 100;
-  static const double _badgeSize = 30;
+  static const double _badgeSize = 32;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        width: _size,
-        height: _size,
+        width: size,
+        height: size,
         child: Stack(
           clipBehavior: Clip.none,
           children: [
             Container(
-              width: _size,
-              height: _size,
+              width: size,
+              height: size,
               decoration: BoxDecoration(
                 color: AppColors.primary100,
                 shape: BoxShape.circle,
+                border: Border.all(color: AppColors.surface0, width: 4),
+                boxShadow: AppShadows.glow(AppColors.primary500),
                 image: image != null
                     ? DecorationImage(
                         image: FileImage(image!),
@@ -239,7 +321,7 @@ class _ProfilePicturePicker extends StatelessWidget {
               child: image == null
                   ? const Icon(
                       Icons.person_outline,
-                      size: 52,
+                      size: 56,
                       color: AppColors.primary700,
                     )
                   : null,
@@ -251,9 +333,9 @@ class _ProfilePicturePicker extends StatelessWidget {
                 width: _badgeSize,
                 height: _badgeSize,
                 decoration: BoxDecoration(
-                  color: AppColors.primary700,
+                  gradient: AppGradients.sunset,
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.surface50, width: 2),
+                  border: Border.all(color: AppColors.surface0, width: 2),
                 ),
                 child: const Icon(
                   Icons.camera_alt_outlined,

@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/constants/app_typography.dart';
 import '../../../../core/widgets/section_header.dart';
-import '../widgets/destination_card.dart';
-import '../widgets/home_greeting_header.dart';
+import '../widgets/explore_nearby_section.dart';
+import '../widgets/home_profile_header.dart';
 import '../widgets/plan_trip_hero_card.dart';
-import '../widgets/trip_card.dart';
+import '../widgets/recommended_card_stack.dart';
 
-/// The Home tab body: greeting, "plan a trip" CTA, recent trips, and
-/// popular destinations. Rendered inside [AppShell]'s Scaffold, so it has
-/// no Scaffold or bottom nav of its own.
+/// The Home tab body: profile header, headline, "Recommended" swipeable
+/// stack, "Plan a new trip" CTA, and "Explore Nearby". Rendered inside
+/// [AppShell]'s Scaffold, so it has no Scaffold or bottom nav of its own.
 ///
 /// Data below is hardcoded for this UI-first pass; it will move behind a
 /// provider once the home feature is wired to real data.
@@ -27,60 +29,42 @@ class HomeScreen extends StatelessWidget {
           AppSpacing.xxxl,
         ),
         children: [
-          const HomeGreetingHeader(),
+          const HomeProfileHeader(),
           const SizedBox(height: AppSpacing.xl),
-          const PlanTripHeroCard(),
+          Text(
+            'Where is the road taking you next?',
+            style: AppTypography.display,
+          ),
           const SizedBox(height: AppSpacing.xxl),
           SectionHeader(
-            title: 'Recent trips',
+            title: 'Recommended',
             actionLabel: 'View all',
             onActionTap: () {},
           ),
           const SizedBox(height: AppSpacing.md),
-          SizedBox(
-            height: 190,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                TripCard(
-                  imageAsset: 'assets/home/trip_hunza_valley.jpg',
-                  name: 'Hunza Valley',
-                  dateRangeLabel: 'Jun 12-15',
-                  travelerCount: 2,
-                ),
-                SizedBox(width: AppSpacing.md),
-                TripCard(
-                  imageAsset: 'assets/home/trip_naran_kaghan.jpg',
-                  name: 'Naran Kaghan',
-                  dateRangeLabel: 'Jul 3-6',
-                  travelerCount: 4,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xxl),
-          const SectionHeader(title: 'Popular destinations'),
-          const SizedBox(height: AppSpacing.md),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: AppSpacing.md,
-            crossAxisSpacing: AppSpacing.md,
-            childAspectRatio: 0.85,
-            children: const [
-              DestinationCard(
-                imageAsset: 'assets/home/destination_swat_valley.jpg',
-                name: 'Swat Valley',
-                subtitle: 'Alpine forests & rivers',
+          const RecommendedCardStack(),
+          const SizedBox(height: AppSpacing.xxxxl),
+          Row(
+            children: [
+              const Icon(
+                Icons.flight_takeoff_rounded,
+                color: AppColors.primary700,
+                size: 22,
               ),
-              DestinationCard(
-                imageAsset: 'assets/home/destination_fairy_meadows.jpg',
-                name: 'Fairy Meadows',
-                subtitle: 'Nanga Parbat basecamp',
-              ),
+              const SizedBox(width: AppSpacing.sm),
+              Text("Let's plan your trip", style: AppTypography.h1),
             ],
           ),
+          const SizedBox(height: AppSpacing.lg),
+          const PlanTripHeroCard(),
+          const SizedBox(height: AppSpacing.xxl),
+          SectionHeader(
+            title: 'Explore Nearby',
+            actionLabel: 'See all',
+            onActionTap: () {},
+          ),
+          const SizedBox(height: AppSpacing.md),
+          const ExploreNearbySection(),
         ],
       ),
     );
