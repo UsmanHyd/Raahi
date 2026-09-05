@@ -75,10 +75,14 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
   }
 
   void _planTrip() {
+    final startingFrom = _startingFromController.text.trim();
     final destination = _destinationController.text.trim();
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => AddPlacesScreen(
+          startingFrom: startingFrom.isEmpty
+              ? 'your starting point'
+              : startingFrom,
           destinationName: destination.isEmpty
               ? 'your destination'
               : destination,

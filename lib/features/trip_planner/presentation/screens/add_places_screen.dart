@@ -9,6 +9,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/widgets/circle_icon_button.dart';
 import '../../../../core/widgets/primary_button.dart';
+import 'route_preview_screen.dart';
 
 const _fullMonthNames = [
   'January',
@@ -34,10 +35,12 @@ const _fullMonthNames = [
 class AddPlacesScreen extends StatefulWidget {
   const AddPlacesScreen({
     super.key,
+    required this.startingFrom,
     required this.destinationName,
     this.dateRange,
   });
 
+  final String startingFrom;
   final String destinationName;
   final DateTimeRange? dateRange;
 
@@ -105,12 +108,15 @@ class _AddPlacesScreenState extends State<AddPlacesScreen> {
   }
 
   void _finishPlanning() {
-    // TODO: wire to the trip repository once the backend is in place.
-    Navigator.of(context).popUntil((route) => route.isFirst);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Your trip to ${widget.destinationName} is underway!'),
-        backgroundColor: AppColors.primary700,
+    // TODO: send the selected places to the trip repository once the
+    // backend is in place — for now both Skip and Continue move on to the
+    // same route preview.
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => RoutePreviewScreen(
+          startingFrom: widget.startingFrom,
+          destinationName: widget.destinationName,
+        ),
       ),
     );
   }
