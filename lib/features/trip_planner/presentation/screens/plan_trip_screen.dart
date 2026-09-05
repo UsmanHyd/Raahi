@@ -10,6 +10,7 @@ import '../../../../core/constants/app_typography.dart';
 import '../../../../core/widgets/circle_icon_button.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../widgets/trip_calendar_sheet.dart';
+import 'add_places_screen.dart';
 
 const _monthAbbreviations = [
   'Jan',
@@ -74,7 +75,17 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
   }
 
   void _planTrip() {
-    // TODO: wire to the trip repository once the backend is in place.
+    final destination = _destinationController.text.trim();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AddPlacesScreen(
+          destinationName: destination.isEmpty
+              ? 'your destination'
+              : destination,
+          dateRange: _dateRange,
+        ),
+      ),
+    );
   }
 
   String get _formattedDateRange {
