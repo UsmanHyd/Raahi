@@ -9,6 +9,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/widgets/circle_icon_button.dart';
 import '../../../../core/widgets/primary_button.dart';
+import 'stopover_detail_screen.dart';
 
 /// Shown after Add Places — a route overview between the trip's start and
 /// destination, plus a suggested stopover timeline.
@@ -17,7 +18,7 @@ import '../../../../core/widgets/primary_button.dart';
 /// decorative illustration (a drawn dashed route between two pins), not a
 /// real interactive map — adding one (e.g. google_maps_flutter) means new
 /// platform config and API keys, which is a bigger call than this pass
-/// warrants. The timeline's middle stopover is mocked content; only the
+/// warrants. The timeline's stopovers are mocked content; only the
 /// start/destination labels reflect what the user actually entered.
 class RoutePreviewScreen extends StatelessWidget {
   const RoutePreviewScreen({
@@ -41,8 +42,61 @@ class RoutePreviewScreen extends StatelessWidget {
     );
   }
 
+  List<RouteStop> _buildStops() {
+    return [
+      RouteStop(
+        caption: 'Starting point · 0 km',
+        title: startingFrom,
+        dotStyle: DotStyle.start,
+      ),
+      const RouteStop(
+        caption: 'Stopover 1 · 240 km · 4h drive',
+        title: 'Besham (rest stop)',
+        dotStyle: DotStyle.waypoint,
+        typeLabel: 'Rest stop',
+        imageAsset: 'assets/home/route_besham.jpg',
+        summary: 'Perfect spot to stop for lunch by the Indus River',
+        description:
+            'Besham sits right on the Indus, roughly halfway into the '
+            'drive — a natural break point with riverside food stops '
+            'and clean rest areas before the road starts climbing.',
+      ),
+      const RouteStop(
+        caption: 'Stopover 2 · 320 km · 5.5h drive',
+        title: 'Bahrain (scenic town)',
+        dotStyle: DotStyle.waypoint,
+        typeLabel: 'Scenic town',
+        imageAsset: 'assets/home/route_bahrain.jpg',
+        summary: 'Popular tourist market and roaring torrent views',
+        description:
+            'Bahrain overlooks the Swat River at its most dramatic — '
+            'fast, loud rapids right beside the main bazaar. Worth a '
+            'short stop even if you\'re not staying the night.',
+      ),
+      RouteStop(
+        caption: 'Final destination · 385 km · 7h drive',
+        title: '$destinationName (overnight stay)',
+        dotStyle: DotStyle.destination,
+        typeLabel: 'Overnight stay',
+        imageAsset: 'assets/home/route_kalam.jpg',
+        summary: 'Pine forests and the gateway to Swat\'s high lakes',
+        description:
+            'The road ends its paved stretch here — $destinationName is '
+            'where most travelers base themselves before continuing on '
+            'to the high-altitude lakes further up.',
+        hazardBadge: 'Jeep required',
+        hazardDescription:
+            'Road beyond this point towards the lakes is unpaved and '
+            'rugged — a 4x4 or local jeep service is needed, regular '
+            'cars won\'t make it.',
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final stops = _buildStops();
+
     return Scaffold(
       backgroundColor: AppColors.surface50,
       body: Column(
@@ -116,10 +170,8 @@ class RoutePreviewScreen extends StatelessWidget {
                 const SizedBox(height: AppSpacing.xl),
                 Text('Planned road trip timeline', style: AppTypography.h2),
                 const SizedBox(height: AppSpacing.md),
-                _RouteTimeline(
-                  startingFrom: startingFrom,
-                  destinationName: destinationName,
-                ),
+                for (var i = 0; i < stops.length; i++)
+                  _TimelineStop(stop: stops[i], isLast: i == stops.length - 1),
               ],
             ),
           ),
@@ -278,68 +330,42 @@ class _MapPin extends StatelessWidget {
   }
 }
 
-class _RouteTimeline extends StatelessWidget {
-  const _RouteTimeline({
-    required this.startingFrom,
-    required this.destinationName,
-  });
+enum DotStyle { start, waypoint, destination }
 
-  final String startingFrom;
-  final String destinationName;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _TimelineStop(
-          caption: 'Starting point · 0 km',
-          title: startingFrom,
-          dotStyle: _DotStyle.start,
-          isLast: false,
-        ),
-        _TimelineStop(
-          caption: 'Stopover 1 · 240 km · 4h drive',
-          title: 'Besham (rest stop)',
-          dotStyle: _DotStyle.waypoint,
-          isLast: false,
-          detail: _StopDetailCard(
-            imageAsset: 'assets/home/route_besham.jpg',
-            caption: 'Perfect spot to stop for lunch by the Indus River',
-          ),
-        ),
-        _TimelineStop(
-          caption: 'Final destination · 385 km · 7h drive',
-          title: '$destinationName (overnight stay)',
-          dotStyle: _DotStyle.destination,
-          isLast: true,
-          detail: const _StopWarningCard(
-            badge: 'JEEP REQUIRED',
-            caption:
-                'Road beyond this point towards lakes is unpaved and '
-                'rugged.',
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-enum _DotStyle { start, waypoint, destination }
-
-class _TimelineStop extends StatelessWidget {
-  const _TimelineStop({
+/// Everything the timeline row and the [StopoverDetailScreen] need for one
+/// stop. [imageAsset]/[summary]/[description] are null for the plain
+/// starting point, which has nothing worth a detail screen.
+class RouteStop {
+  const RouteStop({
     required this.caption,
     required this.title,
     required this.dotStyle,
-    required this.isLast,
-    this.detail,
+    this.typeLabel,
+    this.imageAsset,
+    this.summary,
+    this.description,
+    this.hazardBadge,
+    this.hazardDescription,
   });
 
   final String caption;
   final String title;
-  final _DotStyle dotStyle;
+  final DotStyle dotStyle;
+  final String? typeLabel;
+  final String? imageAsset;
+  final String? summary;
+  final String? description;
+  final String? hazardBadge;
+  final String? hazardDescription;
+
+  bool get hasDetail => imageAsset != null;
+}
+
+class _TimelineStop extends StatelessWidget {
+  const _TimelineStop({required this.stop, required this.isLast});
+
+  final RouteStop stop;
   final bool isLast;
-  final Widget? detail;
 
   @override
   Widget build(BuildContext context) {
@@ -351,7 +377,7 @@ class _TimelineStop extends StatelessWidget {
             width: 20,
             child: Column(
               children: [
-                _TimelineDot(style: dotStyle),
+                _TimelineDot(style: stop.dotStyle),
                 if (!isLast)
                   Expanded(child: Container(width: 2, color: AppColors.border)),
               ],
@@ -365,16 +391,16 @@ class _TimelineStop extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    caption,
+                    stop.caption,
                     style: AppTypography.caption.copyWith(
                       color: AppColors.ink600,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xs),
-                  Text(title, style: AppTypography.bodyEmphasis),
-                  if (detail != null) ...[
+                  Text(stop.title, style: AppTypography.bodyEmphasis),
+                  if (stop.hasDetail) ...[
                     const SizedBox(height: AppSpacing.sm),
-                    detail!,
+                    _StopSummaryCard(stop: stop),
                   ],
                 ],
               ),
@@ -389,11 +415,11 @@ class _TimelineStop extends StatelessWidget {
 class _TimelineDot extends StatelessWidget {
   const _TimelineDot({required this.style});
 
-  final _DotStyle style;
+  final DotStyle style;
 
   @override
   Widget build(BuildContext context) {
-    final size = style == _DotStyle.destination ? 16.0 : 12.0;
+    final size = style == DotStyle.destination ? 16.0 : 12.0;
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.xs),
       child: Container(
@@ -401,12 +427,12 @@ class _TimelineDot extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: style == _DotStyle.start
+          color: style == DotStyle.start
               ? AppColors.surface0
               : AppColors.primary700,
-          border: style == _DotStyle.start
+          border: style == DotStyle.start
               ? Border.all(color: AppColors.ink900, width: 2)
-              : style == _DotStyle.destination
+              : style == DotStyle.destination
               ? Border.all(color: AppColors.primary100, width: 3)
               : null,
         ),
@@ -415,106 +441,128 @@ class _TimelineDot extends StatelessWidget {
   }
 }
 
-class _StopDetailCard extends StatelessWidget {
-  const _StopDetailCard({required this.imageAsset, required this.caption});
+/// A stop's compact preview card in the timeline — image, one-line summary,
+/// and a "Details" affordance. Tapping anywhere on it opens
+/// [StopoverDetailScreen] for the full picture.
+class _StopSummaryCard extends StatelessWidget {
+  const _StopSummaryCard({required this.stop});
 
-  final String imageAsset;
-  final String caption;
+  final RouteStop stop;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.sm),
-      decoration: BoxDecoration(
-        color: AppColors.surface0,
+    return Material(
+      color: AppColors.surface0,
+      borderRadius: AppRadius.cardRadius,
+      child: InkWell(
         borderRadius: AppRadius.cardRadius,
-        boxShadow: AppShadows.card,
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppRadius.chip),
-            child: Image.asset(
-              imageAsset,
-              width: 48,
-              height: 48,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                width: 48,
-                height: 48,
-                decoration: const BoxDecoration(gradient: AppGradients.primary),
-                child: const Icon(
-                  LucideIcons.utensils,
-                  color: AppColors.surface0,
-                  size: 20,
-                ),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => StopoverDetailScreen(stop: stop)),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.cardRadius,
+            boxShadow: AppShadows.card,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(AppRadius.chip),
+                    child: Image.asset(
+                      stop.imageAsset!,
+                      width: 48,
+                      height: 48,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 48,
+                        height: 48,
+                        decoration: const BoxDecoration(
+                          gradient: AppGradients.primary,
+                        ),
+                        child: const Icon(
+                          LucideIcons.mountain,
+                          color: AppColors.surface0,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      stop.summary!,
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.ink600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
+              if (stop.hazardBadge != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                _HazardBadge(label: stop.hazardBadge!),
+              ],
+              const SizedBox(height: AppSpacing.xs),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    'Details',
+                    style: AppTypography.captionEmphasis.copyWith(
+                      color: AppColors.primary700,
+                    ),
+                  ),
+                  const Icon(
+                    LucideIcons.chevronRight,
+                    size: 14,
+                    color: AppColors.primary700,
+                  ),
+                ],
+              ),
+            ],
           ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Text(
-              caption,
-              style: AppTypography.caption.copyWith(color: AppColors.ink600),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
-class _StopWarningCard extends StatelessWidget {
-  const _StopWarningCard({required this.badge, required this.caption});
+class _HazardBadge extends StatelessWidget {
+  const _HazardBadge({required this.label});
 
-  final String badge;
-  final String caption;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.sm),
-      decoration: BoxDecoration(
-        color: AppColors.surface0,
-        borderRadius: AppRadius.cardRadius,
-        boxShadow: AppShadows.card,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      decoration: BoxDecoration(
+        color: AppColors.accentAmber.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.sm,
-              vertical: AppSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.accentAmber.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  LucideIcons.triangleAlert,
-                  size: 12,
-                  color: AppColors.accentTerracotta,
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                Text(
-                  badge,
-                  style: AppTypography.caption.copyWith(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.accentTerracotta,
-                  ),
-                ),
-              ],
-            ),
+          const Icon(
+            LucideIcons.triangleAlert,
+            size: 12,
+            color: AppColors.accentTerracotta,
           ),
-          const SizedBox(height: AppSpacing.xs),
+          const SizedBox(width: AppSpacing.xs),
           Text(
-            caption,
-            style: AppTypography.caption.copyWith(color: AppColors.ink600),
+            label,
+            style: AppTypography.caption.copyWith(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: AppColors.accentTerracotta,
+            ),
           ),
         ],
       ),
