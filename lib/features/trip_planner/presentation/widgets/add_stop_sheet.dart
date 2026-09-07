@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_gradients.dart';
 import '../../../../core/constants/app_radius.dart';
+import '../../../../core/constants/app_shadows.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 
@@ -112,7 +113,7 @@ class _AddStopSheetState extends State<AddStopSheet> {
       builder: (context, scrollController) {
         return DecoratedBox(
           decoration: BoxDecoration(
-            color: AppColors.surface0,
+            color: AppColors.surface50,
             borderRadius: AppRadius.sheetRadius,
           ),
           child: ListView(
@@ -126,7 +127,7 @@ class _AddStopSheetState extends State<AddStopSheet> {
             children: [
               Center(
                 child: Container(
-                  width: 36,
+                  width: 40,
                   height: 4,
                   margin: const EdgeInsets.only(bottom: AppSpacing.lg),
                   decoration: BoxDecoration(
@@ -135,12 +136,18 @@ class _AddStopSheetState extends State<AddStopSheet> {
                   ),
                 ),
               ),
-              Text('Add a stop', style: AppTypography.h2),
-              const SizedBox(height: AppSpacing.md),
+              Text('Add a stop', style: AppTypography.h1),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                'Discover places near ${widget.nearbyToLabel}',
+                style: AppTypography.body.copyWith(color: AppColors.ink600),
+              ),
+              const SizedBox(height: AppSpacing.lg),
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface50,
+                  color: AppColors.surface0,
                   borderRadius: BorderRadius.circular(999),
+                  boxShadow: AppShadows.card,
                 ),
                 child: TextField(
                   controller: _searchController,
@@ -161,7 +168,7 @@ class _AddStopSheetState extends State<AddStopSheet> {
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
-                    fillColor: AppColors.surface50,
+                    fillColor: AppColors.surface0,
                     contentPadding: const EdgeInsets.symmetric(
                       vertical: AppSpacing.md,
                     ),
@@ -169,11 +176,21 @@ class _AddStopSheetState extends State<AddStopSheet> {
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
-              Text(
-                'RECOMMENDED PLACES NEARBY',
-                style: AppTypography.captionEmphasis.copyWith(
-                  color: AppColors.ink600,
-                ),
+              Row(
+                children: [
+                  const Icon(
+                    LucideIcons.sparkles,
+                    size: 15,
+                    color: AppColors.primary700,
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  Text(
+                    'RECOMMENDED PLACES NEARBY',
+                    style: AppTypography.captionEmphasis.copyWith(
+                      color: AppColors.ink600,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: AppSpacing.md),
               if (_filteredPlaces.isEmpty)
@@ -190,7 +207,7 @@ class _AddStopSheetState extends State<AddStopSheet> {
                 )
               else
                 for (final place in _filteredPlaces) ...[
-                  _NearbyPlaceRow(
+                  _NearbyPlaceCard(
                     place: place,
                     nearbyToLabel: widget.nearbyToLabel,
                     onAdd: () => Navigator.of(context).pop(place),
@@ -205,8 +222,8 @@ class _AddStopSheetState extends State<AddStopSheet> {
   }
 }
 
-class _NearbyPlaceRow extends StatelessWidget {
-  const _NearbyPlaceRow({
+class _NearbyPlaceCard extends StatelessWidget {
+  const _NearbyPlaceCard({
     required this.place,
     required this.nearbyToLabel,
     required this.onAdd,
@@ -216,61 +233,106 @@ class _NearbyPlaceRow extends StatelessWidget {
   final String nearbyToLabel;
   final VoidCallback onAdd;
 
+  static const double _height = 120;
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(AppRadius.chip),
-          child: Image.asset(
-            place.imageAsset,
-            width: 48,
-            height: 48,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Container(
-              width: 48,
-              height: 48,
-              decoration: const BoxDecoration(gradient: AppGradients.primary),
-              child: const Icon(
-                LucideIcons.mountain,
-                color: AppColors.surface0,
-                size: 20,
+    return Container(
+      height: _height,
+      decoration: BoxDecoration(
+        borderRadius: AppRadius.cardRadius,
+        boxShadow: AppShadows.card,
+      ),
+      child: ClipRRect(
+        borderRadius: AppRadius.cardRadius,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              place.imageAsset,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                decoration: const BoxDecoration(gradient: AppGradients.primary),
+                child: const Icon(
+                  LucideIcons.mountain,
+                  color: AppColors.surface0,
+                  size: 32,
+                ),
               ),
             ),
-          ),
-        ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(place.name, style: AppTypography.bodyEmphasis),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                '${place.distanceLabel} from $nearbyToLabel',
-                style: AppTypography.caption.copyWith(color: AppColors.ink600),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: AppSpacing.sm),
-        Material(
-          color: AppColors.primary700,
-          shape: const CircleBorder(),
-          child: InkWell(
-            onTap: onAdd,
-            customBorder: const CircleBorder(),
-            child: const Padding(
-              padding: EdgeInsets.all(AppSpacing.sm),
-              child: Icon(
-                LucideIcons.plus,
-                size: 16,
-                color: AppColors.surface0,
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Color(0xD9000000)],
+                  stops: [0.3, 1],
+                ),
               ),
             ),
-          ),
+            Positioned(
+              left: AppSpacing.md,
+              right: AppSpacing.md,
+              bottom: AppSpacing.md,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    place.name,
+                    style: AppTypography.bodyEmphasis.copyWith(
+                      color: AppColors.surface0,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        LucideIcons.mapPin,
+                        size: 12,
+                        color: AppColors.surface0,
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Text(
+                        '${place.distanceLabel} from $nearbyToLabel',
+                        style: AppTypography.caption.copyWith(
+                          color: AppColors.surface0.withValues(alpha: 0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              top: AppSpacing.sm,
+              right: AppSpacing.sm,
+              child: Material(
+                color: Colors.transparent,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  onTap: onAdd,
+                  customBorder: const CircleBorder(),
+                  child: Container(
+                    padding: const EdgeInsets.all(AppSpacing.sm),
+                    decoration: BoxDecoration(
+                      gradient: AppGradients.primary,
+                      shape: BoxShape.circle,
+                      boxShadow: AppShadows.glow(AppColors.primary500),
+                    ),
+                    child: const Icon(
+                      LucideIcons.plus,
+                      size: 16,
+                      color: AppColors.surface0,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
