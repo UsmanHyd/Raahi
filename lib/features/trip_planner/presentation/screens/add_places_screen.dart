@@ -116,6 +116,7 @@ class _AddPlacesScreenState extends State<AddPlacesScreen> {
         builder: (_) => RoutePreviewScreen(
           startingFrom: widget.startingFrom,
           destinationName: widget.destinationName,
+          dateRange: widget.dateRange,
         ),
       ),
     );

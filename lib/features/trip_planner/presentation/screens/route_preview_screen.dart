@@ -9,6 +9,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/widgets/circle_icon_button.dart';
 import '../../../../core/widgets/primary_button.dart';
+import 'hotels_screen.dart';
 import 'stopover_detail_screen.dart';
 
 /// Shown after Add Places — a route overview between the trip's start and
@@ -25,19 +26,21 @@ class RoutePreviewScreen extends StatelessWidget {
     super.key,
     required this.startingFrom,
     required this.destinationName,
+    this.dateRange,
   });
 
   final String startingFrom;
   final String destinationName;
+  final DateTimeRange? dateRange;
 
   void _continueToHotels(BuildContext context) {
-    // TODO: push the Hotels screen once it's built; for now this finishes
-    // the trip-planning flow the same way Add Places used to.
-    Navigator.of(context).popUntil((route) => route.isFirst);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Your trip to $destinationName is underway!'),
-        backgroundColor: AppColors.primary700,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => HotelsScreen(
+          startingFrom: startingFrom,
+          destinationName: destinationName,
+          dateRange: dateRange,
+        ),
       ),
     );
   }
