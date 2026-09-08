@@ -61,6 +61,7 @@ class TravelPlanScreen extends StatefulWidget {
 class _TravelPlanScreenState extends State<TravelPlanScreen> {
   late final int _dayCount;
   late final List<List<_PlanActivity>> _days;
+  late final List<_DayStats> _dayStats;
   int _selectedDay = 0;
 
   @override
@@ -70,6 +71,24 @@ class _TravelPlanScreenState extends State<TravelPlanScreen> {
         ? 5
         : widget.dateRange!.end.difference(widget.dateRange!.start).inDays + 1;
     _days = List.generate(_dayCount, _buildDay);
+    // Hardcoded per day, same as the rest of this flow's mock content —
+    // there's no real routing data to compute this from yet.
+    _dayStats = List.generate(_dayCount, _buildDayStats);
+  }
+
+  _DayStats _buildDayStats(int index) {
+    final isFirstDay = index == 0;
+    final isLastDay = index == _dayCount - 1 && _dayCount > 1;
+
+    if (isFirstDay || isLastDay) {
+      return const _DayStats(
+        distanceLabel: '245 km',
+        driveTimeLabel: '~5h drive',
+      );
+    }
+    return index.isEven
+        ? const _DayStats(distanceLabel: '60 km', driveTimeLabel: '~1.5h drive')
+        : const _DayStats(distanceLabel: '40 km', driveTimeLabel: '~1h drive');
   }
 
   List<_PlanActivity> _buildDay(int index) {
@@ -274,6 +293,11 @@ class _TravelPlanScreenState extends State<TravelPlanScreen> {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.md),
+                _DayStatsRow(
+                  stopCount: _days[_selectedDay].length,
+                  stats: _dayStats[_selectedDay],
+                ),
+                const SizedBox(height: AppSpacing.lg),
                 _DayTimeline(activities: _days[_selectedDay]),
                 const SizedBox(height: AppSpacing.xxxl),
               ],
@@ -431,6 +455,90 @@ class _DayTab extends StatelessWidget {
   }
 }
 
+/// The "N stops · X km · ~Yh drive" summary shown for the currently
+/// selected day, between the date label and its timeline.
+class _DayStatsRow extends StatelessWidget {
+  const _DayStatsRow({required this.stopCount, required this.stats});
+
+  final int stopCount;
+  final _DayStats stats;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.primary100,
+        borderRadius: AppRadius.chipRadius,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _DayStatItem(
+            icon: LucideIcons.mapPin,
+            value: '$stopCount',
+            label: stopCount == 1 ? 'Stop' : 'Stops',
+          ),
+          _StatDivider(),
+          _DayStatItem(
+            icon: LucideIcons.route,
+            value: stats.distanceLabel,
+            label: 'Distance',
+          ),
+          _StatDivider(),
+          _DayStatItem(
+            icon: LucideIcons.clock,
+            value: stats.driveTimeLabel,
+            label: 'Drive time',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DayStatItem extends StatelessWidget {
+  const _DayStatItem({
+    required this.icon,
+    required this.value,
+    required this.label,
+  });
+
+  final IconData icon;
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 16, color: AppColors.primary700),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          value,
+          style: AppTypography.bodyEmphasis.copyWith(
+            color: AppColors.primary700,
+          ),
+        ),
+        Text(
+          label,
+          style: AppTypography.caption.copyWith(color: AppColors.ink600),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatDivider extends StatelessWidget {
+  const _StatDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(width: 1, height: 32, color: AppColors.border);
+  }
+}
+
 class _DayTimeline extends StatelessWidget {
   const _DayTimeline({required this.activities});
 
@@ -554,4 +662,14 @@ class _PlanActivity {
   final String title;
   final String subtitle;
   final IconData icon;
+}
+
+/// A day's distance/drive-time summary — hardcoded per day, same as the
+/// rest of this flow's mock content. Stop count isn't stored here since
+/// it's just the length of that day's activity list.
+class _DayStats {
+  const _DayStats({required this.distanceLabel, required this.driveTimeLabel});
+
+  final String distanceLabel;
+  final String driveTimeLabel;
 }
