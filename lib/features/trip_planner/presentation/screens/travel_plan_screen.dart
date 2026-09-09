@@ -8,7 +8,9 @@ import '../../../../core/constants/app_shadows.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/widgets/circle_icon_button.dart';
+import '../../../../core/widgets/primary_button.dart';
 import '../widgets/add_stop_sheet.dart';
+import 'trip_confirmation_screen.dart';
 
 const _weekdayNames = [
   'Monday',
@@ -203,6 +205,19 @@ class _TravelPlanScreenState extends State<TravelPlanScreen> {
     );
   }
 
+  void _confirmTrip() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => TripConfirmationScreen(
+          startingFrom: widget.startingFrom,
+          destinationName: widget.destinationName,
+          dayCount: _dayCount,
+          dateRange: widget.dateRange,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final date = _dateForDay(_selectedDay);
@@ -213,6 +228,34 @@ class _TravelPlanScreenState extends State<TravelPlanScreen> {
         onPressed: _addActivity,
         backgroundColor: AppColors.primary700,
         child: const Icon(LucideIcons.plus, color: AppColors.surface0),
+      ),
+      bottomNavigationBar: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.surface0,
+          boxShadow: AppShadows.card,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.sm,
+          ),
+          child: SafeArea(
+            top: false,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                boxShadow: AppShadows.glow(AppColors.primary500),
+              ),
+              child: PrimaryButton(
+                label: 'Confirm your trip',
+                onPressed: _confirmTrip,
+                expand: true,
+              ),
+            ),
+          ),
+        ),
       ),
       body: Column(
         children: [
