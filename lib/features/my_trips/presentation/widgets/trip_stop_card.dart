@@ -11,11 +11,11 @@ import '../../domain/entities/trip_memory.dart';
 import '../../domain/entities/trip_stop.dart';
 import 'memory_upload_grid.dart';
 
-/// One stop/action within a day's itinerary — header (icon, title,
-/// subtitle, time), a notes field, a memories upload grid, and a Save
-/// button. Owns its own notes/memories/saved state; nothing is persisted
-/// beyond this screen's lifetime yet, matching the rest of the app's
-/// mock-data-first UI.
+/// One stop/action within a day's itinerary — a header (icon, title,
+/// subtitle, time), a notes field, a collapsible memories uploader, and a
+/// Save button. Owns its own notes/memories/saved state; nothing is
+/// persisted beyond this screen's lifetime yet, matching the rest of the
+/// app's mock-data-first UI.
 class TripStopCard extends StatefulWidget {
   const TripStopCard({super.key, required this.stop});
 
@@ -136,9 +136,7 @@ class _TripStopCardState extends State<TripStopCard> {
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
-          Text('Memories', style: AppTypography.bodyEmphasis),
-          const SizedBox(height: AppSpacing.sm),
-          MemoryUploadGrid(memories: _memories, onChanged: _onMemoriesChanged),
+          _MemoriesSection(memories: _memories, onChanged: _onMemoriesChanged),
           const SizedBox(height: AppSpacing.lg),
           PrimaryButton(
             label: _saved ? 'Saved' : 'Save',
@@ -147,6 +145,94 @@ class _TripStopCardState extends State<TripStopCard> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// A collapsed trigger — "Save your memories for this trip" — that expands
+/// into the photo/video upload grid on tap, so a stop's card stays compact
+/// until the traveler actually wants to add or view memories.
+class _MemoriesSection extends StatefulWidget {
+  const _MemoriesSection({required this.memories, required this.onChanged});
+
+  final List<TripMemory> memories;
+  final ValueChanged<List<TripMemory>> onChanged;
+
+  @override
+  State<_MemoriesSection> createState() => _MemoriesSectionState();
+}
+
+class _MemoriesSectionState extends State<_MemoriesSection> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final count = widget.memories.length;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () => setState(() => _expanded = !_expanded),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.md,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.surface100,
+              borderRadius: AppRadius.chipRadius,
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  LucideIcons.imagePlus,
+                  size: 18,
+                  color: AppColors.primary700,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    'Save your memories for this trip',
+                    style: AppTypography.bodyEmphasis,
+                  ),
+                ),
+                if (count > 0) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary100,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      '$count',
+                      style: AppTypography.captionEmphasis.copyWith(
+                        color: AppColors.primary700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                ],
+                Icon(
+                  _expanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+                  size: 18,
+                  color: AppColors.ink300,
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (_expanded) ...[
+          const SizedBox(height: AppSpacing.md),
+          MemoryUploadGrid(
+            memories: widget.memories,
+            onChanged: widget.onChanged,
+          ),
+        ],
+      ],
     );
   }
 }
