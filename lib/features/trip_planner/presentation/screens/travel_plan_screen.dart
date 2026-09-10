@@ -10,6 +10,7 @@ import '../../../../core/constants/app_typography.dart';
 import '../../../../core/widgets/circle_icon_button.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../widgets/add_stop_sheet.dart';
+import '../widgets/share_trip_sheet.dart';
 import 'trip_confirmation_screen.dart';
 
 const _weekdayNames = [
@@ -198,10 +199,11 @@ class _TravelPlanScreenState extends State<TravelPlanScreen> {
   }
 
   void _shareItinerary() {
-    // TODO: build a real share/export once there's a share_plus dependency
-    // to flag and add — for now this just confirms the tap registered.
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Sharing your plan isn\'t available yet')),
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: AppColors.surface50,
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.sheetRadius),
+      builder: (context) => const ShareTripSheet(),
     );
   }
 

@@ -9,6 +9,8 @@ import '../../../../core/constants/app_radius.dart';
 import '../../../../core/constants/app_shadows.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
+import '../widgets/share_trip_sheet.dart';
+import 'offline_download_screen.dart';
 
 const _monthAbbreviations = [
   'Jan',
@@ -134,17 +136,23 @@ class _TripConfirmationScreenState extends State<TripConfirmationScreen>
   }
 
   void _downloadOffline() {
-    // TODO: wire to a real offline-download pipeline once one exists.
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Offline download isn\'t available yet')),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => OfflineDownloadScreen(
+          startingFrom: widget.startingFrom,
+          destinationName: widget.destinationName,
+          dayCount: widget.dayCount,
+        ),
+      ),
     );
   }
 
   void _exportAndShare() {
-    // TODO: build a real share/export once there's a share_plus dependency
-    // to flag and add.
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Sharing your plan isn\'t available yet')),
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: AppColors.surface50,
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.sheetRadius),
+      builder: (context) => const ShareTripSheet(),
     );
   }
 
