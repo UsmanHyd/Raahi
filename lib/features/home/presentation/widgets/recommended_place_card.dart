@@ -6,6 +6,7 @@ import '../../../../core/constants/app_radius.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../screens/place_detail_screen.dart';
+import 'recommended_card_stack.dart';
 
 /// A single card in the "Recommended" swipeable stack.
 ///
@@ -14,20 +15,9 @@ import '../screens/place_detail_screen.dart';
 /// handling is independent of the card-swiper's own drag gesture, so
 /// swipe-to-dismiss keeps working normally.
 class RecommendedPlaceCard extends StatefulWidget {
-  const RecommendedPlaceCard({
-    super.key,
-    required this.imageAsset,
-    required this.name,
-    required this.location,
-    required this.rating,
-    required this.price,
-  });
+  const RecommendedPlaceCard({super.key, required this.place});
 
-  final String imageAsset;
-  final String name;
-  final String location;
-  final double rating;
-  final String price;
+  final RecommendedPlace place;
 
   @override
   State<RecommendedPlaceCard> createState() => _RecommendedPlaceCardState();
@@ -47,7 +37,7 @@ class _RecommendedPlaceCardState extends State<RecommendedPlaceCard> {
           fit: StackFit.expand,
           children: [
             Image.asset(
-              widget.imageAsset,
+              widget.place.imageAsset,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) => Container(
                 decoration: const BoxDecoration(
@@ -67,7 +57,7 @@ class _RecommendedPlaceCardState extends State<RecommendedPlaceCard> {
             Positioned(
               top: AppSpacing.lg,
               left: AppSpacing.lg,
-              child: _RatingBadge(rating: widget.rating),
+              child: _RatingBadge(rating: widget.place.rating),
             ),
             Positioned(
               top: AppSpacing.lg,
@@ -100,14 +90,14 @@ class _RecommendedPlaceCardState extends State<RecommendedPlaceCard> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      widget.name,
+                      widget.place.name,
                       style: AppTypography.h2.copyWith(
                         color: AppColors.surface0,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
-                      widget.location,
+                      widget.place.location,
                       style: AppTypography.caption.copyWith(
                         color: AppColors.surface0.withValues(alpha: 0.85),
                       ),
@@ -117,7 +107,7 @@ class _RecommendedPlaceCardState extends State<RecommendedPlaceCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          widget.price,
+                          widget.place.price,
                           style: AppTypography.bodyEmphasis.copyWith(
                             color: AppColors.surface0,
                           ),
@@ -136,9 +126,8 @@ class _RecommendedPlaceCardState extends State<RecommendedPlaceCard> {
                               child: FilledButton(
                                 onPressed: () => Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (_) => PlaceDetailScreen(
-                                      placeName: widget.name,
-                                    ),
+                                    builder: (_) =>
+                                        PlaceDetailScreen(place: widget.place),
                                   ),
                                 ),
                                 style: FilledButton.styleFrom(

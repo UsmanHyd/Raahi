@@ -35,7 +35,12 @@ const _monthAbbreviations = [
 /// Material one — see [TripCalendarSheet]) since it costs nothing extra to
 /// wire up properly.
 class PlanTripScreen extends StatefulWidget {
-  const PlanTripScreen({super.key});
+  const PlanTripScreen({super.key, this.initialDestination});
+
+  /// Pre-fills the "Destination" field — used when this screen is opened
+  /// from a place's "Plan a trip here" button rather than Home's blank
+  /// "Plan a new trip" card.
+  final String? initialDestination;
 
   @override
   State<PlanTripScreen> createState() => _PlanTripScreenState();
@@ -45,7 +50,9 @@ class _PlanTripScreenState extends State<PlanTripScreen> {
   static const List<String> _budgetLevels = ['Budget', 'Mid-range', 'Premium'];
 
   final _startingFromController = TextEditingController();
-  final _destinationController = TextEditingController();
+  late final _destinationController = TextEditingController(
+    text: widget.initialDestination ?? '',
+  );
   DateTimeRange? _dateRange;
   int _travelerCount = 2;
   int _budgetIndex = 1;
