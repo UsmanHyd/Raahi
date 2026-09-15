@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_gradients.dart';
 import '../../../../core/constants/app_shadows.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
+import '../screens/place_detail_screen.dart';
 import 'destination_card.dart';
+import 'recommended_card_stack.dart';
 
 /// The "Explore Nearby" section: a row of selectable category chips above a
 /// horizontally-scrolling list of [DestinationCard]s for the selected
-/// category. All hardcoded for this UI-first pass.
+/// category. Tapping a card opens [PlaceDetailScreen] — the same detail
+/// screen (and "Plan a trip here" CTA) used by the "Recommended" stack, so
+/// both surfaces lead somewhere real instead of a dead end. All hardcoded
+/// for this UI-first pass.
 class ExploreNearbySection extends StatefulWidget {
   const ExploreNearbySection({super.key});
 
@@ -18,15 +24,53 @@ class ExploreNearbySection extends StatefulWidget {
       label: 'For You',
       glowColor: AppColors.primary500,
       destinations: [
-        _Destination(
-          imageAsset: 'assets/home/destination_swat_valley.jpg',
-          name: 'Swat Valley',
-          subtitle: 'Alpine forests & rivers',
+        _NearbyDestination(
+          tagline: 'Alpine forests & rivers',
+          place: RecommendedPlace(
+            imageAsset: 'assets/home/destination_swat_valley.jpg',
+            name: 'Swat Valley',
+            location: 'Khyber Pakhtunkhwa',
+            rating: 4.7,
+            price: r'From PKR 8,000',
+            description:
+                "Known as the 'Switzerland of Pakistan' — pine-covered "
+                'slopes, the Swat River winding through green valleys, and '
+                'charming hill towns like Kalam and Mingora.',
+            bestTimeToVisit: 'April – October',
+            highlights: [
+              PlaceHighlight(icon: LucideIcons.footprints, label: 'Hiking'),
+              PlaceHighlight(icon: LucideIcons.waves, label: 'River rafting'),
+              PlaceHighlight(icon: LucideIcons.camera, label: 'Photography'),
+              PlaceHighlight(
+                icon: LucideIcons.utensils,
+                label: 'Local cuisine',
+              ),
+            ],
+          ),
         ),
-        _Destination(
-          imageAsset: 'assets/home/destination_fairy_meadows.jpg',
-          name: 'Fairy Meadows',
-          subtitle: 'Nanga Parbat basecamp',
+        _NearbyDestination(
+          tagline: 'Nanga Parbat basecamp',
+          place: RecommendedPlace(
+            imageAsset: 'assets/home/destination_fairy_meadows.jpg',
+            name: 'Fairy Meadows',
+            location: 'Gilgit-Baltistan',
+            rating: 4.9,
+            price: r'From PKR 20,000',
+            description:
+                'A lush green meadow at the base of Nanga Parbat, the '
+                "world's ninth-highest peak — reached by jeep and a scenic "
+                "trek, with unmatched views of the 'Killer Mountain'.",
+            bestTimeToVisit: 'June – September',
+            highlights: [
+              PlaceHighlight(icon: LucideIcons.footprints, label: 'Trekking'),
+              PlaceHighlight(icon: LucideIcons.tent, label: 'Camping'),
+              PlaceHighlight(
+                icon: LucideIcons.mountain,
+                label: 'Mountain views',
+              ),
+              PlaceHighlight(icon: LucideIcons.camera, label: 'Photography'),
+            ],
+          ),
         ),
       ],
     ),
@@ -34,15 +78,51 @@ class ExploreNearbySection extends StatefulWidget {
       label: 'Lakes',
       glowColor: AppColors.accentAmber,
       destinations: [
-        _Destination(
-          imageAsset: 'assets/home/destination_saif_ul_malook.jpg',
-          name: 'Saif-ul-Malook',
-          subtitle: 'Glacial lake, Kaghan',
+        _NearbyDestination(
+          tagline: 'Glacial lake, Kaghan',
+          place: RecommendedPlace(
+            imageAsset: 'assets/home/destination_saif_ul_malook.jpg',
+            name: 'Saif-ul-Malook',
+            location: 'Kaghan Valley',
+            rating: 4.8,
+            price: r'From PKR 9,000',
+            description:
+                'A glacial lake framed by dramatic peaks, steeped in '
+                'folklore about a prince and a fairy — reachable by jeep '
+                'from Naran, best visited at sunrise for still, '
+                'mirror-like waters.',
+            bestTimeToVisit: 'May – September',
+            highlights: [
+              PlaceHighlight(icon: LucideIcons.waves, label: 'Boating'),
+              PlaceHighlight(icon: LucideIcons.camera, label: 'Photography'),
+              PlaceHighlight(icon: LucideIcons.footprints, label: 'Hiking'),
+              PlaceHighlight(icon: LucideIcons.utensils, label: 'Picnic spots'),
+            ],
+          ),
         ),
-        _Destination(
-          imageAsset: 'assets/home/destination_attabad_lake.jpg',
-          name: 'Attabad Lake',
-          subtitle: 'Turquoise waters, Hunza',
+        _NearbyDestination(
+          tagline: 'Turquoise waters, Hunza',
+          place: RecommendedPlace(
+            imageAsset: 'assets/home/destination_attabad_lake.jpg',
+            name: 'Attabad Lake',
+            location: 'Hunza',
+            rating: 4.7,
+            price: r'From PKR 10,000',
+            description:
+                'A striking turquoise lake formed after a 2010 landslide, '
+                "now one of Hunza's most photographed spots — boat rides "
+                'and lakeside cafes against a backdrop of towering peaks.',
+            bestTimeToVisit: 'April – October',
+            highlights: [
+              PlaceHighlight(icon: LucideIcons.waves, label: 'Boating'),
+              PlaceHighlight(icon: LucideIcons.camera, label: 'Photography'),
+              PlaceHighlight(
+                icon: LucideIcons.utensils,
+                label: 'Lakeside dining',
+              ),
+              PlaceHighlight(icon: LucideIcons.cableCar, label: 'Zip-lining'),
+            ],
+          ),
         ),
       ],
     ),
@@ -50,15 +130,53 @@ class ExploreNearbySection extends StatefulWidget {
       label: 'Mountains',
       glowColor: AppColors.accentTerracotta,
       destinations: [
-        _Destination(
-          imageAsset: 'assets/home/destination_fairy_meadows.jpg',
-          name: 'Fairy Meadows',
-          subtitle: 'Nanga Parbat basecamp',
+        _NearbyDestination(
+          tagline: 'Nanga Parbat basecamp',
+          place: RecommendedPlace(
+            imageAsset: 'assets/home/destination_fairy_meadows.jpg',
+            name: 'Fairy Meadows',
+            location: 'Gilgit-Baltistan',
+            rating: 4.9,
+            price: r'From PKR 20,000',
+            description:
+                'A lush green meadow at the base of Nanga Parbat, the '
+                "world's ninth-highest peak — reached by jeep and a scenic "
+                "trek, with unmatched views of the 'Killer Mountain'.",
+            bestTimeToVisit: 'June – September',
+            highlights: [
+              PlaceHighlight(icon: LucideIcons.footprints, label: 'Trekking'),
+              PlaceHighlight(icon: LucideIcons.tent, label: 'Camping'),
+              PlaceHighlight(
+                icon: LucideIcons.mountain,
+                label: 'Mountain views',
+              ),
+              PlaceHighlight(icon: LucideIcons.camera, label: 'Photography'),
+            ],
+          ),
         ),
-        _Destination(
-          imageAsset: 'assets/home/destination_deosai.jpg',
-          name: 'Deosai Plains',
-          subtitle: 'Land of giants',
+        _NearbyDestination(
+          tagline: 'Land of giants',
+          place: RecommendedPlace(
+            imageAsset: 'assets/home/destination_deosai.jpg',
+            name: 'Deosai Plains',
+            location: 'Skardu',
+            rating: 4.9,
+            price: r'From PKR 15,000',
+            description:
+                'One of the highest plateaus in the world — vast golden '
+                'grasslands, wildflowers, and a chance to spot the '
+                'Himalayan brown bear in its natural habitat.',
+            bestTimeToVisit: 'June – September',
+            highlights: [
+              PlaceHighlight(
+                icon: LucideIcons.binoculars,
+                label: 'Wildlife spotting',
+              ),
+              PlaceHighlight(icon: LucideIcons.tent, label: 'Camping'),
+              PlaceHighlight(icon: LucideIcons.moonStar, label: 'Stargazing'),
+              PlaceHighlight(icon: LucideIcons.footprints, label: 'Trekking'),
+            ],
+          ),
         ),
       ],
     ),
@@ -70,6 +188,12 @@ class ExploreNearbySection extends StatefulWidget {
 
 class _ExploreNearbySectionState extends State<ExploreNearbySection> {
   int _selectedIndex = 0;
+
+  void _openPlace(BuildContext context, RecommendedPlace place) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => PlaceDetailScreen(place: place)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,11 +231,14 @@ class _ExploreNearbySectionState extends State<ExploreNearbySection> {
               final destination = destinations[index];
               return SizedBox(
                 width: 160,
-                child: DestinationCard(
-                  imageAsset: destination.imageAsset,
-                  name: destination.name,
-                  subtitle: destination.subtitle,
-                  glowColor: category.glowColor,
+                child: GestureDetector(
+                  onTap: () => _openPlace(context, destination.place),
+                  child: DestinationCard(
+                    imageAsset: destination.place.imageAsset,
+                    name: destination.place.name,
+                    subtitle: destination.tagline,
+                    glowColor: category.glowColor,
+                  ),
                 ),
               );
             },
@@ -178,17 +305,14 @@ class _ExploreCategory {
 
   final String label;
   final Color glowColor;
-  final List<_Destination> destinations;
+  final List<_NearbyDestination> destinations;
 }
 
-class _Destination {
-  const _Destination({
-    required this.imageAsset,
-    required this.name,
-    required this.subtitle,
-  });
+/// Pairs a punchy display tagline (shown on the compact [DestinationCard])
+/// with the full [RecommendedPlace] data needed by [PlaceDetailScreen].
+class _NearbyDestination {
+  const _NearbyDestination({required this.tagline, required this.place});
 
-  final String imageAsset;
-  final String name;
-  final String subtitle;
+  final String tagline;
+  final RecommendedPlace place;
 }
